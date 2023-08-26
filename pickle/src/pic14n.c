@@ -725,7 +725,7 @@ pic14n_write_data_memory(uint32_t address, uint8_t data)
 {
 	pic14n_load_pc_address(address);
 	pic14n_load_data_for_nvm(data, 0);
-	pic14n_begin_internally_timed_programming(PIC16N_TPINT_CONFIG);
+	pic14n_begin_internally_timed_programming(PIC14N_TPINT_CONFIG);
 }
 
 /*****************************************************************************
@@ -1024,7 +1024,7 @@ pic14n_view_data(pic_data *pdata)
 
 	printf("[%04X] ", pdata->address >> 1);
 	for (uint32_t i = 0; i < pdata->nbytes; i += 2) {
-		wdata = (pdata->bytes[i] | pdata->bytes[i + 1] << 8) & PIC14_MASK;
+		wdata = (pdata->bytes[i] | pdata->bytes[i + 1] << 8) & PIC14N_MASK;
 		printf("%04X ", wdata);
 	}
 	putchar('\n');
@@ -1119,11 +1119,11 @@ pic14n_dumphexcode(uint32_t address, uint32_t size, uint32_t *data)
 	uint32_t i, j, nlines = 0;
 
 	for (i = 0; i < size; address += 8, i += 8) {
-		if (pic_mtcode(PIC14_MASK, 8, &data[i]))
+		if (pic_mtcode(PIC14N_MASK, 8, &data[i]))
 			continue;
 		printf("[%04X] ", address);
 		for (j = 0; j < 8; ++j)
-			printf("%04X ", data[i + j] & PIC14_MASK);
+			printf("%04X ", data[i + j] & PIC14N_MASK);
 		for (j = 0; j < 8; ++j)
 			putchar(PIC_CHAR(0xFF & data[i + j]));
 		putchar('\n');
@@ -1145,7 +1145,7 @@ pic14n_dumpinhxcode(uint32_t address, uint32_t size, uint32_t *data)
 	pic_dumpaddr(0, 1);
 
 	for (i = 0; i < size; address += 8, i += 8) {
-		if (pic_mtcode(PIC14_MASK, 8, &data[i]))
+		if (pic_mtcode(PIC14N_MASK, 8, &data[i]))
 			continue;
 
 		uint8_t cc, hb, lb;

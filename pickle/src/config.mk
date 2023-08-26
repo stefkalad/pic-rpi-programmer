@@ -18,25 +18,26 @@
 #
 
 # build targets (enable:1 disable:0)
-P12=1
-P14=1
+P12=0
+P14=0
 N14=1
-P16=1
-N16=1
-P24=1
-P32=1
+P16=0
+N16=0
+P24=0
+P32=0
 PCTRL=1
 PTEST=1
 PIO=1
 PLOAD=0
 
 # back/front-ends (where available) (enable:1 disable:0)
+PICKLE_RPI=1
 STK500=0
 MCP23017=0
-BITBANG=1
-FTDI=1
+BITBANG=0
+FTDI=0
 MCP2221=0
-CP2104=1
+CP2104=0
 SERIAL=0
 
 # gdb else strip (gdb:1 strip:0)

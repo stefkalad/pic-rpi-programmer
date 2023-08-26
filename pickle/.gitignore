@@ -1,0 +1,9 @@
+**/*.s
+**/*.o
+**/*.i
+**/*.map
+**/pickle
+**/pio
+**/ptest
+**/pctrl
+.vscode

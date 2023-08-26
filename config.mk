@@ -28,17 +28,17 @@ P32=0
 PCTRL=1
 PTEST=1
 PIO=1
-PLOAD=0
+# PLOAD=0
 
 # back/front-ends (where available) (enable:1 disable:0)
 PICKLE_RPI=1
-STK500=0
-MCP23017=0
-BITBANG=0
-FTDI=0
-MCP2221=0
-CP2104=0
-SERIAL=0
+# STK500=0
+# MCP23017=0
+# BITBANG=0
+# FTDI=0
+# MCP2221=0
+# CP2104=0
+# SERIAL=0
 
 # gdb else strip (gdb:1 strip:0)
 GDB=0

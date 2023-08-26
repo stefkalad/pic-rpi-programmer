@@ -1,0 +1,67 @@
+DEVICE=RPI
+
+# I/O 1/2-bit delay/sleep time
+#
+# For ttyS 1 is fine
+# For ttyUSB try 600
+#
+# When SLEEP is set to zero no delay is taken
+# When SLEEP is less than 10, then SLEEP x I/O bit time is taken for R-PI and tty
+# When SLEEP is less than 100 a busy loop is utilised
+# When SLEEP is >=100 then system usleep is used.
+#
+# For GPIO BIT-BANG SLEEP configures the low and high clock durations in the driver
+#
+# RASPBERRY PI GPIO
+SLEEP=1
+
+# I/O bit rules.
+#       These rules determine the polarity of the control lines and whether
+#       data input requires data output pulled high.
+# 0x0001 PGD_OUT_FLIP
+# 0x0002 PGC_OUT_FLIP
+# 0x0004 VPP_OUT_FLIP
+# 0x0008 PGD_IN_FLIP
+# 0x0010 PGD_IN_PULLUP
+# 0x0020 PGM_OUT_FLIP
+#       These rules are for GPIOs on program exit.
+# 0x0100 PGD_RELEASE
+# 0x0200 PGC_RELEASE
+# 0x0400 PGM_RELEASE
+# 0x0800 VPP_RELEASE
+# 0x1000 VPP_RUN
+#	This rule enables shift with irq lock for GPIO BIT-BANG
+# 0x2000 BB_LOCK
+#       This rule re-enables the ALT0 function when an R-PI GPIO is released.
+# 0x4000 ALT_RELEASE
+#
+# TTY VELLEMAN K8048 = PGD_IN_PULLUP + PGD_OUT_FLIP + PGC_OUT_FLIP + VPP_OUT_FLIP + PGD_IN_FLIP
+# TTY VELLEMAN K8076 = PGD_IN_PULLUP
+# RPI VELLEMAN K8048 = PGD_IN_PULLUP
+# RASPBERRY PI GPIO
+BITRULES=0x1000
+
+# I/O busy cursor (0=DISABLED)
+# 
+BUSY=0
+
+# R-PI OR GPIO BIT-BANG (single PGD DATA I/O)
+#                  = CHIPKIT PI =
+# !MCLR/VPP        - RPi-Connect 18
+VPP=2
+# PGM              - RPi-Connect 12
+PGM=-1
+# PGC CLOCK        - RPi-Connect 16
+PGC=3
+# PGD DATA_I/O     - RPi-Connect 20
+PGD=4
+
+# MCP23017 I2C ADDRESS (README.i2c)
+#
+MCP=0x20
+
+# ICSP I/O 1/2-bit sleep time for `pio'.
+FWSLEEP=30
+
+# Debug level (0=NONE, 1=ERROR, 10=INFO)
+DEBUG=1

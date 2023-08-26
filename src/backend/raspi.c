@@ -20,7 +20,6 @@
 #undef DEBUG
 
 #include "pickle.h"
-#include "raspi.h"
 
 /******************************************************************************
  *
@@ -142,9 +141,9 @@ raspi_open(void)
 	gpio_base_addr += GPIO_BASE_ADDR_OFFSET;
 
 	/* Open /dev/mem */
-	gpio_mem = open("/dev/mem", O_RDWR | O_SYNC);
+	gpio_mem = open("/dev/gpiomem", O_RDWR | O_SYNC);
 	if (gpio_mem < 0) {
-		printf("%s: warning: open failed [/dev/mem] [%s]\n", __func__, strerror(errno));
+		printf("%s: warning: open failed [/dev/gpiomem] [%s]\n", __func__, strerror(errno));
 		gpio_mem = -1;
 		return -1;
 	}

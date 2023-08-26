@@ -21,14 +21,18 @@
 include config.mk
 
 CC=gcc
-CFLAGS=-Os -std=gnu99 -pedantic-errors -I. -Wall
+MKDIR=mkdir -p
+
+CFLAGS=-Os -std=gnu99 -pedantic-errors -Wall
 CFLAGS+=-D__USE_LINUX_IOCTL_DEFS
+CFLAGS+=-DRPI
+INCLUDE=-I. -Isrc/backend -Isrc
 LDFLAGS=
+
 OUT_DIR=out
 SRC_DIR=src
 OUT_BIN_DIR=out/bin
-
-BINDIR=/usr/local/bin
+OS_BIN_DIR=~/.local/bin
 
 ifeq "$(GDB)" "1"
 CFLAGS+=-ggdb
@@ -43,18 +47,18 @@ CFLAGS+=-DLOADER
 endif
 
 
-
-TARGET1=$(OUT_BIN_DIR)/pickle
+TARGET1_NAME=pickle
+TARGET1=$(OUT_BIN_DIR)/$(TARGET1_NAME)
 SOURCE1=pickle.c dotconf.c inhx32.c io.c pic.c util.c
 
-TARGET2=$(OUT_BIN_DIR)/pio
-SOURCE2=pio.c icspio.c dotconf.c io.c util.c
+# TARGET2=$(OUT_BIN_DIR)/pio
+# SOURCE2=pio.c icspio.c dotconf.c io.c util.c
 
-TARGET3=$(OUT_BIN_DIR)/ptest
-SOURCE3=ptest.c icspio.c dotconf.c io.c util.c
+# TARGET3=$(OUT_BIN_DIR)/ptest
+# SOURCE3=ptest.c icspio.c dotconf.c io.c util.c
 
-TARGET4=$(OUT_BIN_DIR)/pctrl
-SOURCE4=pctrl.c dotconf.c io.c util.c
+# TARGET4=$(OUT_BIN_DIR)/pctrl
+# SOURCE4=pctrl.c dotconf.c io.c util.c
 
 # CLIB5=$(CLIB)
 # TARGET5=pload
@@ -116,10 +120,10 @@ endif
 # endif
 
 ifeq "$(PICKLE_RPI)" "1"
- SOURCE1+=raspi.c
- SOURCE2+=raspi.c
- SOURCE3+=raspi.c
- SOURCE4+=raspi.c
+ SOURCE1+=backend/raspi.c
+#  SOURCE2+=backend/raspi.c
+#  SOURCE3+=backend/raspi.c
+#  SOURCE4+=backend/raspi.c
 #  SOURCE5+=raspi.c
 endif
 
@@ -132,14 +136,14 @@ OBJECT1=$(patsubst %, $(OUT_DIR)/%.o, $(basename $(SOURCE1)))
 HEADER1=$(patsubst %, $(SRC_DIR)/%.h, $(basename $(SOURCE1)))
 
 
-OBJECT2=$(SOURCE2:.c=.o)
-HEADER2=$(SOURCE2:.c=.h)
+# OBJECT2=$(SOURCE2:.c=.o)
+# HEADER2=$(SOURCE2:.c=.h)
 
-OBJECT3=$(SOURCE3:.c=.o)
-HEADER3=$(SOURCE3:.c=.h)
+# OBJECT3=$(SOURCE3:.c=.o)
+# HEADER3=$(SOURCE3:.c=.h)
 
-OBJECT4=$(SOURCE4:.c=.o)
-HEADER4=$(SOURCE4:.c=.h)
+# OBJECT4=$(SOURCE4:.c=.o)
+# HEADER4=$(SOURCE4:.c=.h)
 
 # OBJECT5=$(SOURCE5:.c=.o)
 # HEADER5=$(SOURCE5:.c=.h)
@@ -150,42 +154,33 @@ HEADER4=$(SOURCE4:.c=.h)
 # COMMAND LINE TOOL(S)
 #
 TARGETS:=$(TARGET1)
-ifeq "$(PIO)" "1"
-TARGETS:=$(TARGETS) $(TARGET2)
-endif
-ifeq "$(PTEST)" "1"
-TARGETS:=$(TARGETS) $(TARGET3)
-endif
-ifeq "$(PCTRL)" "1"
-TARGETS:=$(TARGETS) $(TARGET4)
-endif
+# ifeq "$(PIO)" "1"
+# TARGETS:=$(TARGETS) $(TARGET2)
+# endif
+# ifeq "$(PTEST)" "1"
+# TARGETS:=$(TARGETS) $(TARGET3)
+# endif
+# ifeq "$(PCTRL)" "1"
+# TARGETS:=$(TARGETS) $(TARGET4)
+# endif
 # ifeq "$(PLOAD)" "1"
 # TARGETS:=$(TARGETS) $(TARGET5)
 # endif
 
-build:$(TARGET1)
+build:$(TARGETS)
 
 
 
-$(TARGET1): $(OBJECT1) | $(OUT_BIN_DIR)
+$(TARGET1): $(OBJECT1)
 	@echo -n "[LINK] "
+	$(MKDIR) $(dir $@)
 	$(CC) $(LDFLAGS) $^ -o $@
 
 
-# $(OBJECT1):$(HEADER1) Makefile config.mk VERSION
-
-
-$(OUT_DIR)/%.o: $(SRC_DIR)/%.c | $(OUT_DIR)
+$(OUT_DIR)/%.o: $(SRC_DIR)/%.c 
 	@echo -n "[CC] "
-	$(CC) $(CFLAGS) -c $< -o $@
-
-
-$(OUT_BIN_DIR):
-	mkdir -p $(OUT_BIN_DIR)
-
-$(OUT_DIR):
-	mkdir -p $(OUT_DIR)
-
+	$(MKDIR) $(dir $@)
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 
 # $(TARGET1):$(OBJECT1)
@@ -223,43 +218,43 @@ $(OUT_DIR):
 
 # $(OBJECT5):$(HEADER5) Makefile config.mk VERSION pickle.h
 
-install:build
-	mkdir -p $(BINDIR)
-	cp $(TARGET1) $(BINDIR)/$(TARGET1)
-ifeq "$(P12)" "1"
-	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p12
-endif
-ifeq "$(P14)" "1"
-	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p14
-endif
+install: build
+	$(MKDIR) $(OS_BIN_DIR)
+	cp $(TARGET1) $(OS_BIN_DIR)/$(TARGET1_NAME)
+# ifeq "$(P12)" "1"
+# 	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p12
+# endif
+# ifeq "$(P14)" "1"
+# 	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p14
+# endif
 ifeq "$(N14)" "1"
-	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/n14
+	ln -sf $(OS_BIN_DIR)/$(TARGET1_NAME) $(OS_BIN_DIR)/n14
 endif
-ifeq "$(P16)" "1"
-	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p16
-endif
-ifeq "$(N16)" "1"
-	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/n16
-endif
-ifeq "$(P24)" "1"
-	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p24
-endif
-ifeq "$(P32)" "1"
-	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p32
-endif
-ifeq "$(PIO)" "1"
-	cp $(TARGET2) $(BINDIR)/$(TARGET2)
-endif
-ifeq "$(PTEST)" "1"
-	cp $(BINDIR)/$(TARGET1) $(BINDIR)/ptest
-endif
-ifeq "$(PCTRL)" "1"
-	cp $(BINDIR)/$(TARGET1) $(BINDIR)/pctrl
-endif
-ifeq "$(TTY)" "1"
-	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/pload
-endif
+# ifeq "$(P16)" "1"
+# 	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p16
+# endif
+# ifeq "$(N16)" "1"
+# 	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/n16
+# endif
+# ifeq "$(P24)" "1"
+# 	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p24
+# endif
+# ifeq "$(P32)" "1"
+# 	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/p32
+# endif
+# ifeq "$(PIO)" "1"
+# 	cp $(TARGET2) $(BINDIR)/$(TARGET2)
+# endif
+# ifeq "$(PTEST)" "1"
+# 	cp $(BINDIR)/$(TARGET1) $(BINDIR)/ptest
+# endif
+# ifeq "$(PCTRL)" "1"
+# 	cp $(BINDIR)/$(TARGET1) $(BINDIR)/pctrl
+# endif
+# ifeq "$(TTY)" "1"
+# 	ln -sf $(BINDIR)/$(TARGET1) $(BINDIR)/pload
+# endif
 
 clean:
 	cd pickle-conf && $(MAKE) clean
-	rm -f out/*
+	rm -rf out/*

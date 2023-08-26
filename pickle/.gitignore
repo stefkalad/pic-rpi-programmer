@@ -1,3 +1,4 @@
+../.vscode
 **/*.s
 **/*.o
 **/*.i
@@ -6,4 +7,3 @@
 **/pio
 **/ptest
 **/pctrl
-.vscode

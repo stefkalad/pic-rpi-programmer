@@ -976,6 +976,8 @@ pic14n_program_end(int config)
 	pic14n_standby();
 	if (config)
 		pic14n_write_config();
+	// ADDED TO RELEASE PINS:
+	io_exit(EX_OK);
 }
 
 /*

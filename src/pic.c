@@ -472,23 +472,23 @@ pic_program(char *filename, int blank)
 
 	if (!p.pic->program_data || !p.pic->program_end) {
 		printf("%s: information: program unimplemented\n", __func__);
-		return;
+		io_exit(EX_BADINPUT);
 	}
 	if (!p.pic->bulk_erase) {
 		printf("%s: information: erase unimplemented\n", __func__);
-		return;
+		io_exit(EX_BADINPUT);
 	}
 	if (pic_read_config() < 0)
-		return;
+		io_exit(-1);
 
 	if (blank)
 		p.pic->bulk_erase();
 
 	nbytes = inhx32_array_create(&pdata, filename, &count);
 	if (nbytes == 0) {
-		if (p.error & BADINPUT)
-			io_exit(EX_BADINPUT);
-		return;
+		io_exit(EX_BADINPUT);
+		// if (p.error & BADINPUT)
+		// 	io_exit(EX_BADINPUT);
 	}
 
 	if (p.pic->program_begin)
@@ -522,7 +522,7 @@ pic_verify(char *filename)
 		return 1;
 	}
 	if (pic_read_config() < 0)
-		return 1;
+		io_exit(-1);
 
 	nbytes = inhx32_array_create(&pdata, filename, &count);
 	if (nbytes == 0) {
@@ -618,7 +618,7 @@ pic_blank(int config)
 {
 	if (p.pic->bulk_erase) {
 		if (config && pic_read_config())
-			return;
+			io_exit(-1);
 		p.pic->bulk_erase();
 	} else
 		printf("%s: information: unimplemented\n", __func__);

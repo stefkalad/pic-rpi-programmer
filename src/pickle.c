@@ -851,9 +851,7 @@ main(int argc, char **argv)
 					default:usage(execname, "invalid arg [blank]");
 						break;
 				}
-				if (areyousure("Blank device")) {
-					pic_blank(config);
-				}
+				pic_blank(config);
 			}
 			break;
 
